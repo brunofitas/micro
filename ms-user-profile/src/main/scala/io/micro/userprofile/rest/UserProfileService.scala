@@ -1,16 +1,17 @@
 package io.micro.userprofile.rest
 
-import io.micro.userprofile.dao.{OrgTypeCodecs, ProfileTypeCodecs, SalutationTypeCodecs}
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
-import io.micro.userprofile.dal.{PGUserProfileRepository, UserProfileRepository}
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
-import akka.http.scaladsl.server.{Directives, Route}
-import io.micro.userprofile.dto.UserProfile
-import io.micro.lib.con.DBComponent
-import io.swagger.annotations._
-import io.circe.generic.auto._
 import javax.ws.rs.Path
+
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.{Directives, Route}
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
+import io.circe.generic.auto._
+import io.micro.lib.con.DBComponent
 import io.micro.lib.sys.Success
+import io.micro.userprofile.dal.{PGUserProfileRepository, UserProfileRepository}
+import io.micro.userprofile.dao.{OrgTypeCodecs, ProfileTypeCodecs, SalutationTypeCodecs}
+import io.micro.userprofile.dto.UserProfile
+import io.swagger.annotations._
 
 
 @Api(value = "/profiles", produces = "application/json")
