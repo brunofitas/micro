@@ -47,7 +47,7 @@ class UserProfileRepositoryTests extends WordSpecLike with ScalaFutures with Bef
     }
     "return an error when user-profile does not exists" in {
       whenReady(findById(Some(UUID.randomUUID()))) {
-        case Left(f)  => assert(f == Error(404, "error",Some("User profile not found")))
+        case Left(f)  => assert(f == Error(404, msg = Some("User profile not found")))
         case Right(_) => fail()
       }
     }
@@ -64,7 +64,7 @@ class UserProfileRepositoryTests extends WordSpecLike with ScalaFutures with Bef
     }
     "return an error when user-profile does not exists" in {
       whenReady(findByIdWithMembers(Examples.randomID)) {
-        case Left(f)  => assert(f == Error(404, "error", Some("User profile not found")))
+        case Left(f)  => assert(f == Error(404, msg = Some("User profile not found")))
         case Right(_) => fail()
       }
     }
@@ -87,7 +87,7 @@ class UserProfileRepositoryTests extends WordSpecLike with ScalaFutures with Bef
     }
     "return an error when organisation does not exists" in {
       whenReady(insert(Examples.userProfileDTO.copy(organisation = DTO.Organisation(id = Examples.randomID, None, None, None, None)))) {
-        case Left(e)  => assert(e == Error(404, "error", Some("Organisation not found")))
+        case Left(e)  => assert(e == Error(404, msg = Some("Organisation not found")))
         case Right(_) => fail()
       }
     }
@@ -106,14 +106,14 @@ class UserProfileRepositoryTests extends WordSpecLike with ScalaFutures with Bef
     }
     "return an error when user-profile does not exists" in {
       whenReady(update(Examples.userProfileDTO.copy(id = Some(Examples.randomID), firstName = "Updated")))  {
-        case Left(e)  => assert(e == Error(404, "error", Some("User profile not found")))
+        case Left(e)  => assert(e == Error(404, msg = Some("User profile not found")))
         case Right(_) => fail()
       }
     }
     "return an error when organisation does not exists" in {
       val invalidOrg = DTO.Organisation(id = Examples.randomID, None, None, None, None)
       whenReady(update(Examples.userProfileDTO.copy(id = Examples.existingProfile.id, organisation = invalidOrg))) {
-        case Left(e)  => assert(e == Error(409, "error", Some("Invalid organisation")))
+        case Left(e)  => assert(e == Error(409, msg = Some("Invalid organisation")))
         case Right(_) => fail()
       }
     }
@@ -126,13 +126,13 @@ class UserProfileRepositoryTests extends WordSpecLike with ScalaFutures with Bef
     "delete an existing profile" in {
       whenReady(delete(Examples.existingProfile.id)){
         case Left(_)  => fail()
-        case Right(r) => assert(r == Success(200, "success",Some("User profile was removed")))
+        case Right(r) => assert(r == Success(200, msg = Some("User profile was removed")))
       }
     }
 
     "return an error when user-profile does not exists" in {
       whenReady(delete(Some(UUID.randomUUID()))){
-        case Left(e)  => assert(e == Error(404, "error", Some("User profile not found")))
+        case Left(e)  => assert(e == Error(404, msg = Some("User profile not found")))
         case Right(_) => fail()
       }
     }

@@ -26,31 +26,31 @@ private[userprofile] trait UserProfileDBIO extends UserProfileTable {
     def getById(id:Option[UUID]): DBIO[UserProfile] =
       profiles.getById(id).result.headOption.flatMap {
         case Some(pro) => DBIO.successful(pro)
-        case None      => DBIO.failed(Error(404, "error", Some("Profile not found")))
+        case None      => DBIO.failed(Error(404, msg = Some("Profile not found")))
       }
 
     def getByIdWithMembers(id:Option[UUID]): DBIO[(UserProfile, Address, (Organisation, Address))] =
       profiles.getById(id).withMembers.result.headOption.flatMap {
         case Some((pro, add ,org))  => DBIO.successful((pro,add,org))
-        case None                   => DBIO.failed(Error(404, "error", Some("Profile not found")))
+        case None                   => DBIO.failed(Error(404, msg = Some("Profile not found")))
       }
 
     def getOrg(id:Option[UUID]): DBIO[Organisation] =
       organisations.getById(id).result.headOption.flatMap {
         case Some(org) => DBIO.successful(org)
-        case None      => DBIO.failed(Error(404, "error", Some("Organisation not found")))
+        case None      => DBIO.failed(Error(404, msg = Some("Organisation not found")))
       }
 
     def getOrgWithAddress(id:Option[UUID]): DBIO[(Organisation,Address)] =
       organisations.getById(id).withAddress.result.headOption.flatMap {
         case Some((org,add))  => DBIO.successful((org,add))
-        case None             => DBIO.failed(Error(404, "error", Some("Organisation not found")))
+        case None             => DBIO.failed(Error(404, msg =  Some("Organisation not found")))
       }
 
     def getAddress(id:Option[UUID]): DBIO[Address] =
       addresses.getById(id).result.headOption.flatMap {
         case Some(add) => DBIO.successful(add)
-        case None      => DBIO.failed(Error(404, "error", Some("Address not found")))
+        case None      => DBIO.failed(Error(404, msg = Some("Address not found")))
       }
 
     def insert(profile:UserProfile, address:Address): DBIO[(UserProfile,Address,(Organisation,Address))] = {

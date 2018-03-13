@@ -1,7 +1,6 @@
 package io.micro.userprofile.dal
 
 import java.util.UUID
-
 import io.micro.lib.con.DBComponent
 import io.micro.lib.sys
 import io.micro.lib.sys.{Error, Success}
@@ -9,7 +8,6 @@ import io.micro.userprofile.dao.UserProfile
 import io.micro.userprofile.db.PGDBComponent
 import io.micro.userprofile.dbio.UserProfileDBIO
 import io.micro.userprofile.{dto => DTO}
-
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
@@ -42,7 +40,7 @@ private[userprofile] trait UserProfileRepository extends UserProfileDBIO {
       dao <- db.run(UserProfileDBIO.getById(id))
     } yield Right(dao))
     .recover {
-      case Error(404, _, _ )    => Left(Error(404, "error", Some("User profile not found")))
+      case Error(404, _, _ )    => Left(Error(404, msg = Some("User profile not found")))
       case _                    => Left(Error(500))
     }
 
@@ -53,7 +51,7 @@ private[userprofile] trait UserProfileRepository extends UserProfileDBIO {
       dto <- Future(DTO.UserProfile(dao))
     } yield Right(dto))
     .recover {
-      case Error(404, _, _ )    => Left(Error(404, "error", Some("User profile not found")))
+      case Error(404, _, _ )    => Left(Error(404, msg =  Some("User profile not found")))
       case _                    => Left(Error(500))
     }
 
@@ -78,8 +76,8 @@ private[userprofile] trait UserProfileRepository extends UserProfileDBIO {
       dto   <- Future(DTO.UserProfile(dao))
     } yield Right(dto))
     .recover {
-      case _:NoSuchElementException                      => Left(Error(404,"error", Some("User profile not found")))
-      case Error(404, _, Some("Organisation not found")) => Left(Error(409,"error", Some("Invalid organisation")))
+      case _:NoSuchElementException                      => Left(Error(404, msg = Some("User profile not found")))
+      case Error(404, _, Some("Organisation not found")) => Left(Error(409, msg = Some("Invalid organisation")))
       case e:Error                                       => Left(e)
       case _                                             => Left(Error(500))
     }
@@ -90,9 +88,9 @@ private[userprofile] trait UserProfileRepository extends UserProfileDBIO {
       del <- db.run(UserProfileDBIO.delete(id))
       res <- { Future{
         if(del == 1)
-          Right(Success(200,"success",Some("User profile was removed")))
+          Right(Success(200, msg = Some("User profile was removed")))
         else
-          Left(Error(404, "error", Some("User profile not found")))
+          Left(Error(404, msg = Some("User profile not found")))
         }
       }
     } yield res)
