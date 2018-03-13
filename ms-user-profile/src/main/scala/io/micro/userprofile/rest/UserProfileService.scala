@@ -1,7 +1,6 @@
 package io.micro.userprofile.rest
 
 import javax.ws.rs.Path
-
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.{Directives, Route}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
@@ -60,7 +59,8 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
   ))
   @ApiResponses(Array(
     new ApiResponse(code = 500, message = "Internal server error"),
-    new ApiResponse(code = 400, message = "Bad Request")
+    new ApiResponse(code = 409, message = "User profile exists"),
+    new ApiResponse(code = 404, message = "Organisation not found")
   ))
   def createEntity : Route =
     (post & path("profiles" ~ Slash.?) )  {
@@ -127,8 +127,9 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     )
   ))
   @ApiResponses(Array(
-    new ApiResponse(code = 404, message = "Profile not found"),
-    new ApiResponse(code = 400, message = "Bad Request")
+    new ApiResponse(code = 404, message = "User Profile not found"),
+    new ApiResponse(code = 409, message = "Invalid organisation"),
+    new ApiResponse(code = 500, message = "Internal server error")
   ))
   def updateEntity : Route =
     (put & path("profiles" / JavaUUID ~ Slash.?) ){ id =>
