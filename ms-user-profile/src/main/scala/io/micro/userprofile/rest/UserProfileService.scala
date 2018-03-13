@@ -38,7 +38,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     new ApiResponse(code = 500, message = "Internal server error")
   ))
   def listCollection : Route =
-    (get & path("profiles") ) {
+    (get & path("profiles" ~ Slash.?) ) {
       onSuccess(repository.findAllWithMembers) {
         case Left(e) => complete(e.id -> e)
         case Right(r) => complete(200 -> r)
@@ -63,7 +63,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     new ApiResponse(code = 400, message = "Bad Request")
   ))
   def createEntity : Route =
-    (post & path("profiles") )  {
+    (post & path("profiles" ~ Slash.?) )  {
       entity(as[UserProfile]) { content =>
         onSuccess(repository.insert(content)){
           case Left(error)  => complete(error.id -> error)
@@ -95,7 +95,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     new ApiResponse(code = 404, message = "Profile not found")
   ))
   def retrieveEntity : Route = {
-    (get & path("profiles" / JavaUUID) ){ id =>
+    (get & path("profiles" / JavaUUID ~ Slash.?) ){ id =>
       onSuccess(repository.findByIdWithMembers(id)){
         case Left(e)  => complete(e.id -> e)
         case Right(r) => complete(200 -> r)
@@ -131,7 +131,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     new ApiResponse(code = 400, message = "Bad Request")
   ))
   def updateEntity : Route =
-    (put & path("profiles" / JavaUUID) ){ id =>
+    (put & path("profiles" / JavaUUID ~ Slash.?) ){ id =>
       entity(as[UserProfile]) { content =>
         onSuccess(repository.update(content.copy(id = Some(id)))){
           case Left(error)  => complete(error.id -> error)
@@ -161,7 +161,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
     new ApiResponse(code = 404, message = "Profile not found")
   ))
   def deleteEntity : Route =
-    (delete & path("profiles" / JavaUUID) ){ id =>
+    (delete & path("profiles" / JavaUUID ~ Slash.?) ){ id =>
       onSuccess(repository.delete(Some(id))){
         case Left(error)  => complete(error.id -> error)
         case Right(res)   => complete(200 -> res)
@@ -177,7 +177,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
   @ApiOperation(value="Options for user profiles", response = classOf[Void], httpMethod = "OPTIONS", hidden = false)
   @ApiResponses(Array(new ApiResponse(code = 200, message = "OK")))
   def collectionOptions: Route = {
-    (options & path("profiles")) {
+    (options & path("profiles" ~ Slash.?)) {
       complete(HttpResponse(StatusCodes.OK, entity = HttpEntity.empty(ContentTypes.`application/json`)))
     }
   }
@@ -194,7 +194,7 @@ class UserProfileService(repository: UserProfileRepository with DBComponent) ext
   ))
   @ApiResponses(Array(new ApiResponse(code = 200, message = "OK")))
   def entityOptions: Route = {
-    (options & path("profiles" / JavaUUID) ){ _ =>
+    (options & path("profiles" / JavaUUID ~ Slash.?) ){ _ =>
       complete(HttpResponse(StatusCodes.OK, entity = HttpEntity.empty(ContentTypes.`application/json`)))
     }
   }
